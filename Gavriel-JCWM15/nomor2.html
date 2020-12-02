@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<style>
+    table,
+    th,
+    td,
+    tr {
+        border: 1px solid black;
+        border-collapse: collapse;
+    }
+
+    th,
+    td {
+        padding: 10px;
+    }
+
+    td {
+        text-align: center;
+    }
+</style>
+
+<body>
+    <h1>List</h1>
+    <form id="form">
+        <input type="text" placeholder="nama barang" id="nama-barang" />
+        <input type="number" placeholder="harga barang" id="harga-barang" />
+        <br><br>
+        <input type="radio" name="jenis" id="makanan" value="makanan">makanan
+        <input type="radio" name="jenis" id="minuman" value="minuman">minuman
+        <input type="radio" name="jenis" id="lainnya" value="lainnya">lainnya
+        <br><br>
+        <button onclick="btnAdd(event)">ADD</button>
+    </form>
+
+    <h1>Table list</h1>
+    <table>
+        <thead>
+            <tr>
+                <th>No.</th>
+                <th>Nama</th>
+                <th>harga</th>
+                <th>Jenis</th>
+                <th>Action</th>
+            </tr>
+        </thead>
+        <tbody id="tbody"></tbody>
+    </table>
+</body>
+<script>
+    let userList = []
+
+    class list {
+        constructor(no, nama, harga, jenis) {
+            this.no = no,
+                this.nama = nama,
+                this.harga = harga,
+                this.jenis = jenis
+        }
+    }
+
+    let list1 = new list(1, 'beras', '5000', 'makanan')
+    let list2 = new list(2, 'air', '2500', 'minuman')
+    let list3 = new list(3, 'minyak', '4000', 'lainnya')
+
+    userList.push(list1)
+    userList.push(list2)
+    userList.push(list3)
+
+    function showList(ind) {
+        let tbody = document.getElementById('tbody')
+
+        let tr = ''
+        for (let i = 0; i < userList.length; i++) {
+            if (ind === i) {
+                tr += `
+                <tr>
+                    <td>#</td>
+                    <td>
+                        <input type = "text" id="nama-barangbaru" value="${userList[i].nama}">
+                    </td>
+                    <td>
+                        <input type = "number" id="harga-barangbaru" value="${userList[i].harga}">
+                    </td>
+                    <td>
+                        <form id='radio'>
+                            <input type="radio" name="jenis" id="makanan-baru" value="makanan">makanan
+                            <input type="radio" name="jenis" id="minuman-baru" value="minuman">minuman
+                            <input type="radio" name="jenis" id="lainnya-baru" value="lainnya">lainnya
+                        </form>
+                    </td>
+                    <td>
+                        <button onclick = "btnSave(${i})"> SAVE </button>
+                        <button onclick = "btnCancel()"> CANCEL </button>
+                    </td>
+                </tr>
+                `
+            } else {
+                tr += `
+                <tr>
+                    <td>${i + 1}</td>
+                    <td>${userList[i].nama}</td>
+                    <td>${userList[i].harga}</td>
+                    <td>${userList[i].jenis}</td>
+                    <td>
+                        <button onclick=btnEdit(${i})>EDIT</button>
+                        <button onclick=btnDelete(${i})>DELETE</button>
+                    </td>
+                </tr>
+                `
+            }
+        }
+        tbody.innerHTML = tr
+    }
+
+
+    showList()
+
+    function btnAdd(e) {
+        e.preventDefault()
+
+        // let form = document.getElementById('form')
+
+        let nama = form["nama-barang"].value
+        let harga = form["harga-barang"].value
+        let radio = document.getElementById("form")
+        let radioValue
+        if (radio["makanan"].checked) {
+            radioValue = radio["makanan"].value
+        } else if (radio["minuman"].checked) {
+            radioValue = radio["minuman"].value
+        } else if (radio["lainnya"].checked) {
+            radioValue = radio["lainnya"].value
+        }
+
+        if (nama === "" || harga === "" || radioValue === '') {
+            alert("Input Masih Kosong")
+        } else {
+            userList.push(new list(userList.length + 1, nama, harga, radioValue))
+            showList()
+
+            radio["nama-barang"].value = ""
+            radio["harga-barang"].value = ""
+
+        }
+
+    }
+
+    function btnEdit(index) {
+        showList(index)
+    }
+
+    function btnSave(index) {
+        let editNama = document.getElementById("nama-barangbaru").value
+        let editHarga = document.getElementById("harga-barangbaru").value
+        let editRadio = document.getElementById("radio")
+        let editRadioValue
+        if (editRadio["makanan-baru"].checked) {
+            editRadioValue = editRadio["makanan-baru"].value
+        } else if (editRadio["minuman-baru"].checked) {
+            editRadioValue = editRadio["minuman-baru"].value
+        } else if (editRadio["lainnya-baru"].checked) {
+            editRadioValue = editRadio["lainnya-baru"].value
+        }
+
+        userList[index].nama = editNama
+        userList[index].harga = editHarga
+        userList[index].jenis = editRadioValue
+
+        showList()
+    }
+
+    function btnCancel() {
+        showList()
+    }
+
+    function btnDelete(index) {
+        userList.splice(index, 1)
+        showList()
+    }
+</script>
+
+</html>
